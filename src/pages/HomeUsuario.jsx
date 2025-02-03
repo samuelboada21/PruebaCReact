@@ -1,21 +1,22 @@
 import { useState, useEffect } from "react";
 import { Input, Button, Box, VStack, Text } from "@chakra-ui/react";
-import { obtenerNotificacionesPago, obtenerNotificacionPagoPorId } from "../services/PaymentNotificationServices"; // Asegúrate de que el archivo de servicios esté correcto
-import Table from "../components/Table"; // Importamos el componente Table
+import { obtenerNotificacionesPago, obtenerNotificacionPagoPorId } from "../services/PaymentNotificationServices"; 
+import Table from "../components/Table";
 
 const HomeUsuario = () => {
   const [notificaciones, setNotificaciones] = useState([]);
-  const [searchId, setSearchId] = useState(""); // Estado para la búsqueda por ID
-  const [error, setError] = useState(""); // Estado para manejar errores
+  const [searchId, setSearchId] = useState(""); 
+  const [error, setError] = useState("");
 
   // Cargar las notificaciones de pagos
   const cargarNotificaciones = async () => {
     try {
       const data = await obtenerNotificacionesPago();
+      console.log("LAS NOTIFICACIONES", data);
       setNotificaciones(data);
       setError("");
     } catch (err) {
-      setError("Hubo un error al cargar las notificaciones.");
+      setError("Hubo un error al cargar las notificaciones.", err);
     }
   };
 
@@ -23,10 +24,10 @@ const HomeUsuario = () => {
   const buscarPorId = async () => {
     try {
       const data = await obtenerNotificacionPagoPorId(searchId);
-      setNotificaciones([data]); // Mostrar solo la notificación que coincide con el ID
+      setNotificaciones([data]);
       setError("");
     } catch (err) {
-      setError("No se encontró la notificación con ese ID.");
+      setError("No se encontró la notificación con ese ID.", err);
     }
   };
 
@@ -35,7 +36,8 @@ const HomeUsuario = () => {
     cargarNotificaciones();
   }, []);
 
-  const columns = ["FechaHora", "TransaccionID", "Monto", "Banco", "MetodoPago"];
+  const columns = ["fechaHora", "transaccionID", "monto", "banco", "metodoPago"];
+
 
   return (
     <Box p={5}>

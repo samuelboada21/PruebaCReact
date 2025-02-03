@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../util/axios';
 
 // Crear sesión de pago con Stripe
 export const crearSesionPago = async (checkoutData) => {
@@ -14,8 +14,8 @@ export const crearSesionPago = async (checkoutData) => {
 // Obtener todas las notificaciones de pagos
 export const obtenerNotificacionesPago = async () => {
   try {
-    console.log("EL TOKEN ANTES DE ENTRAR AL ENDPOINT-->",localStorage.getItem("token"));
     const response = await axios.get('/api/webhook/payments');
+    console.log("EL BACKEND MANDA", response);
     return response.data; 
   } catch (error) {
     console.error('Error obteniendo las notificaciones de pagos:', error);

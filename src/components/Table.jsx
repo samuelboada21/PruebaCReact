@@ -1,5 +1,14 @@
 /* eslint-disable react/prop-types */
-import { Table as ChakraTable, Thead, Tbody, Tr, Th, Td, TableCaption, TableContainer } from '@chakra-ui/react';
+import {
+  Table as ChakraTable,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
+} from "@chakra-ui/react";
 
 const Table = ({ data = [], columns, caption }) => {
   if (!Array.isArray(data)) {
@@ -22,7 +31,11 @@ const Table = ({ data = [], columns, caption }) => {
           {data.map((row, index) => (
             <Tr key={index}>
               {columns.map((col, colIndex) => (
-                <Td key={colIndex}>{row[col]}</Td>
+                <Td key={colIndex}>
+                  {col === "fechaHora"
+                    ? new Date(row[col]).toLocaleString()
+                    : row[col]}
+                </Td>
               ))}
             </Tr>
           ))}
@@ -31,6 +44,5 @@ const Table = ({ data = [], columns, caption }) => {
     </TableContainer>
   );
 };
-
 
 export default Table;
