@@ -10,7 +10,7 @@ import {
   FormLabel,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { loginUsuario } from "../services/UsuarioServices"; // Importa la función de axios
+import { loginUsuario } from "../services/UsuarioServices"; // Importa la función de login
 
 const Login = () => {
   const [correo, setCorreo] = useState("");
@@ -20,44 +20,35 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(""); // Limpiar errores previos
 
     try {
-      // Usamos la función loginUsuario que usa axios
-      const data = await loginUsuario({ correo, contrasenia });
+      await loginUsuario({ correo, contrasenia });
 
-      // Si la autenticación fue exitosa, obtenemos el token y decodificamos
-      const token = data.token;
+      // Guardar el token en localStorage
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setError("Error al obtener el token.");
+        return;
+      }
+
+      // Decodificar el token para obtener el rol del usuario
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
 
       if (decodedToken.rol === "Usuario") {
         navigate("/home-usuario");
       } else if (decodedToken.rol === "Administrador") {
         navigate("/home-administrador");
+      } else {
+        setError("Rol no reconocido.");
       }
     } catch (error) {
-      // Muestra el error del backend si está disponible
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        setError(error.response.data.message);
-      } else {
-        setError("Credenciales incorrectas");
-      }
+      setError("Credenciales incorrectas.", error);
     }
   };
-
   return (
-    <Box
-      maxW="sm"
-      mx="auto"
-      mt="100px"
-      p="6"
-      borderWidth="1px"
-      borderRadius="md"
-      boxShadow="lg"
-    >
+    <Box w="400px" p="6" borderWidth="1px" borderRadius="md" boxShadow="lg">
       <Text fontSize="2xl" mb="4" textAlign="center">
         Iniciar sesión
       </Text>
@@ -69,7 +60,7 @@ const Login = () => {
       )}
 
       <VStack spacing={4} align="stretch">
-        <FormControl isRequired isInvalid={error}>
+        <FormControl isRequired isInvalid={!!error}>
           <FormLabel htmlFor="correo">Correo electrónico</FormLabel>
           <Input
             type="email"
@@ -81,7 +72,7 @@ const Login = () => {
           {error && <FormErrorMessage>{error}</FormErrorMessage>}
         </FormControl>
 
-        <FormControl isRequired isInvalid={error}>
+        <FormControl isRequired isInvalid={!!error}>
           <FormLabel htmlFor="contrasenia">Contraseña</FormLabel>
           <Input
             type="password"
@@ -93,8 +84,16 @@ const Login = () => {
           {error && <FormErrorMessage>{error}</FormErrorMessage>}
         </FormControl>
 
-        <Button type="submit" colorScheme="teal" mt={4} onClick={handleSubmit}>
+        <Button colorScheme="teal" onClick={handleSubmit}>
           Iniciar sesión
+        </Button>
+
+        <Button
+          colorScheme="gray"
+          variant="outline"
+          onClick={() => navigate("/registro")}
+        >
+          Registrarse
         </Button>
       </VStack>
     </Box>

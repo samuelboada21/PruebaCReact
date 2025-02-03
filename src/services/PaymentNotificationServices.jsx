@@ -14,6 +14,7 @@ export const crearSesionPago = async (checkoutData) => {
 // Obtener todas las notificaciones de pagos
 export const obtenerNotificacionesPago = async () => {
   try {
+    console.log("EL TOKEN ANTES DE ENTRAR AL ENDPOINT-->",localStorage.getItem("token"));
     const response = await axios.get('/api/webhook/payments');
     return response.data; 
   } catch (error) {

@@ -1,7 +1,12 @@
 /* eslint-disable react/prop-types */
 import { Table as ChakraTable, Thead, Tbody, Tr, Th, Td, TableCaption, TableContainer } from '@chakra-ui/react';
 
-const Table = ({ data, columns, caption }) => {
+const Table = ({ data = [], columns, caption }) => {
+  if (!Array.isArray(data)) {
+    console.error("Error: data no es un array", data);
+    return <p>Error al cargar la tabla.</p>; // Evita el crash si `data` no es un array
+  }
+
   return (
     <TableContainer>
       <ChakraTable variant="striped" colorScheme="teal">
@@ -16,8 +21,8 @@ const Table = ({ data, columns, caption }) => {
         <Tbody>
           {data.map((row, index) => (
             <Tr key={index}>
-              {Object.keys(row).map((key) => (
-                <Td key={key}>{row[key]}</Td>
+              {columns.map((col, colIndex) => (
+                <Td key={colIndex}>{row[col]}</Td>
               ))}
             </Tr>
           ))}
@@ -26,5 +31,6 @@ const Table = ({ data, columns, caption }) => {
     </TableContainer>
   );
 };
+
 
 export default Table;
